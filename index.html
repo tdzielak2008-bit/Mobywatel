@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobywatel PWA</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Mobywatel Document Management</h1>
+    <form id="document-form">
+        <input type="text" id="document-title" placeholder="Document Title" required>
+        <textarea id="document-content" placeholder="Document Content" required></textarea>
+        <button type="submit">Add Document</button>
+    </form>
+    
+    <div id="documents">
+        <h2>Documents</h2>
+        <ul id="document-list"></ul>
+    </div>
+    
+    <script>
+        let documents = [];
+
+        document.getElementById('document-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const title = document.getElementById('document-title').value;
+            const content = document.getElementById('document-content').value;
+            const id = new Date().getTime();
+
+            documents.push({ id, title, content });
+            renderDocuments();
+            this.reset();
+        });
+
+        function renderDocuments() {
+            const list = document.getElementById('document-list');
+            list.innerHTML = '';
+            documents.forEach(doc => {
+                const li = document.createElement('li');
+                li.textContent = `${doc.title}: ${doc.content}`;
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.onclick = () => editDocument(doc.id);
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = () => deleteDocument(doc.id);
+                li.appendChild(editButton);
+                li.appendChild(deleteButton);
+                list.appendChild(li);
+            });
+        }
+
+        function editDocument(id) {
+            const doc = documents.find(d => d.id === id);
+            document.getElementById('document-title').value = doc.title;
+            document.getElementById('document-content').value = doc.content;
+            documents = documents.filter(d => d.id !== id);
+            renderDocuments();
+        }
+
+        function deleteDocument(id) {
+            documents = documents.filter(doc => doc.id !== id);
+            renderDocuments();
+        }
+    </script>
+</body>
+</html>
